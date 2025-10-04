@@ -333,3 +333,92 @@ const quickSort2 = function (list) {
   return [...quickSort2(stackSmaller), pivot, ...quickSort2(stackGreater)]; //return an array of all the values of sTacksmaller + pivot + stackGreater
 };
 console.log(quickSort2([33, 5, 15, 55, 10, 36, 44]));
+
+const hashTable = {};
+hashTable["jenny"] = 8675309;
+hashTable["emergency"] = 911;
+console.log(hashTable);
+
+//similar to an Object but suitable for large dataset
+const voted = new Map();
+const checkVoter = function (name) {
+  console.log(voted.get(name));
+  if (!voted.get(name)) {
+    console.log("Let them vote!");
+    voted.set(name, true);
+  } else {
+    console.log("Kick them out!");
+  }
+  console.log(voted);
+
+  return;
+};
+checkVoter("Thomas");
+checkVoter("Thomas");
+checkVoter("Ella");
+
+//**** GRAPH - BREADTH-FIRST SEARCH (shortest path) */
+
+console.log("//**** RAPH - BREADTH-FIRST SEARCH (shortest path) */");
+
+const graphQueue = function (persons) {
+  const queue = [];
+  let neighbors = [];
+  const searched = []; //keeps track of all the people searched to avoid duplicates in queue
+
+  let curNeighbor = "";
+
+  //get neighbors
+  neighbors = persons[Object.keys(persons)[0]];
+  queue.push(...neighbors);
+
+  //LOOP THROUGH PERSONS
+  while (queue.length > 0) {
+    //checks the first person of the queue and pops it off the queue
+    curNeighbor = queue.shift();
+
+    if (!searched.includes(curNeighbor)) {
+      if (isPersonSeller(curNeighbor))
+        return curNeighbor + " is a mango seller!";
+
+      //else: add all neighbors to the queue
+      queue.push(...persons[curNeighbor]);
+      //add the person to the searched array to avoid duplicates
+      searched.push(curNeighbor);
+    }
+    // console.log({
+    //   //persons: persons,
+    //   queue: queue,
+    //   //neighbors: neighbors,
+    //   curNeighbor: curNeighbor,
+    //   "persons[curNeighbor]": persons[curNeighbor],
+    //   queueLength: queueLength,
+    // });
+  }
+  return "no luck finding a mango seller in your entourage :'";
+};
+
+const isPersonSeller = function (name) {
+  if (name[name.length - 1] === "m")
+    //if the name ends with 'm' then we'll return true
+    return true;
+  else return false;
+};
+
+const friends = {
+  you: ["alice", "bob", "claire"],
+  bob: ["anuj", "peggy"],
+  alice: ["peggy"],
+  claire: ["thom", "jonny"],
+  anuj: [],
+  peggy: [],
+  thom: [],
+  jonny: [],
+};
+console.log(graphQueue(friends));
+
+//**** GRAPH - DIJKSTRA (fastest path)*/
+
+console.log("//**** GRAPH - DIJKSTRA (fastest path) */");
+const dijkstra = function (list) {};
+console.log(dijkstra(list));
