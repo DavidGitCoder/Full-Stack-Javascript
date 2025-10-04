@@ -199,18 +199,18 @@ quickSort([156, 141, 35, 94, 88, 61, 111]);
 
 //const selectBiggerNumber(list)
 const selectionSort = function (list) {
-  let mapArr = [];
+  let sorted = [];
   let deletedElement;
 
   while (list.length > 0) {
     //find the greatest number and removes it from original list
     deletedElement = list.splice(findGreatest(list), 1);
-    //adds the deleted element (splice returns an array of the deleted element) in mapArr
-    mapArr.push(deletedElement[0]);
-    console.log(list);
-    console.log(mapArr);
+    //adds the deleted element (splice returns an array of the deleted element) in sorted
+    sorted.push(deletedElement[0]);
+    // console.log(list);
+    // console.log(sorted);
   }
-  return mapArr;
+  return sorted;
 };
 // Find the greatest number in an array
 function findGreatest(list) {
@@ -227,3 +227,109 @@ function findGreatest(list) {
 }
 
 console.log(selectionSort([156, 141, 35, 94, 88, 61, 111]));
+
+//**** RECURSION */
+const countdown = function (num) {
+  console.log(num);
+  if (num <= 0) return 0;
+  countdown(num - 1);
+};
+console.log(countdown(5));
+
+//Recursive Find Biggest Square Size For Area
+const biggestSquare = function findBiggestSquare(width, length) {
+  //base case, return width and length when they are equal
+  console.log({ width: width, length: length });
+
+  if (width === length) {
+    return [width, length];
+  }
+
+  if (length > width) {
+    length = length - width;
+  } else {
+    width = width - length;
+  }
+  return findBiggestSquare(width, length);
+};
+console.log(biggestSquare(1680, 700));
+
+const recSum = function (list, index = 0) {
+  if (index === list.length - 1) return list[index];
+
+  //return list[index] + recSum(list, index + 1); //1st method
+  let x = list[0];
+  list.splice(0, 1); //second method : reduce the size each recursive call
+  return x + recSum(list);
+};
+console.log(recSum([2, 4, 6, 10, 12, 100]));
+
+const nbOfItems = function (list) {
+  if (list.length <= 0) return 0;
+  list.splice(0, 1);
+  return 1 + nbOfItems(list);
+};
+console.log(nbOfItems([0]));
+
+const maxNum = function (list) {
+  if (list.length === 1) return list[0];
+
+  const subMax = maxNum(list.slice(1));
+  if (subMax > list[0]) {
+    return subMax;
+  } else {
+    return list[0];
+  }
+};
+console.log(maxNum([0, 15, 6, 23, 9]));
+
+const recBinarySearch = function (list, val) {
+  let e = list.length;
+  let s = 0;
+  let m = Math.floor((e + s) / 2);
+
+  console.log({ s: s, e: e, m: m });
+
+  if (s > e) return -1;
+
+  if (list[m] === val) return m;
+
+  if (val > list[m]) {
+    s = m + 1;
+  } else {
+    e = m - 1;
+  }
+  console.log({
+    s: s,
+    e: e,
+    m: m,
+    "list[m]": list[m],
+    "list.slice(s, e+1)": list.slice(s, e + 1), //slice(): e is excluded so i add 1 to it
+  });
+  return recBinarySearch(list.slice(s, e + 1), val);
+};
+console.log(recBinarySearch([0, 6, 9, 15, 18, 20, 23], 18));
+
+const quickSort2 = function (list) {
+  if (list.length < 2) return list; //empty arrays or with just 1 element have nothing to sort, return as is
+  let pivot = list[0];
+  let stackSmaller = [];
+  let stackGreater = [];
+
+  for (let i = 1; i < list.length; i++) {
+    if (pivot > list[i]) {
+      stackSmaller.push(list[i]);
+    } else {
+      stackGreater.push(list[i]);
+    }
+  }
+  console.log({
+    list: list,
+    stackSmaller: stackSmaller,
+    stackGreater: stackGreater,
+    pivot: pivot,
+  });
+
+  return [...quickSort2(stackSmaller), pivot, ...quickSort2(stackGreater)]; //return an array of all the values of sTacksmaller + pivot + stackGreater
+};
+console.log(quickSort2([33, 5, 15, 55, 10, 36, 44]));
