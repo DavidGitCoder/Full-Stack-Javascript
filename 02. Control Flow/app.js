@@ -84,7 +84,7 @@ var romanToInt = function (s) {
   return int;
 };
 
-console.log(romanToInt("MCMXCIV"));
+console.log(romanToInt("MDCCCXCIV"));
 
 console.log("***************************************");
 console.log("*** lONGEST COMMON PREFIX CHALLENGE ***");
@@ -123,23 +123,14 @@ var isValid = function (s) {
   let stack = [];
 
   for (let i = 0; i < s.length; i++) {
-    // console.log({
-    //   stack: stack,
-    //   i: i,
-    //   "s[i]": s[i],
-    //   "bracketMap[stack[stack.length - 1]] ":
-    //     bracketMap[stack[stack.length - 1]],
-    // });
     //if truthy thus returning the closed bracket
     if (bracketMap[s[i]]) {
       stack.push(s[i]);
     } else {
       if (bracketMap[stack.pop()] !== s[i]) {
-        //console.log(`poped ${s[i]}`);
         return false;
       }
     }
-    //console.log(stack);
   }
   return stack.length === 0;
 };
@@ -282,10 +273,8 @@ const maxNum = function (list) {
   }
 };
 console.log(maxNum([0, 15, 6, 23, 9]));
-
-const recBinarySearch = function (list, val) {
-  let e = list.length;
-  let s = 0;
+console.log("//**** BINARY SEARCH - RECURSIVE */");
+const recBinarySearch = function (list, val, s, e) {
   let m = Math.floor((e + s) / 2);
 
   console.log({ s: s, e: e, m: m });
@@ -299,24 +288,29 @@ const recBinarySearch = function (list, val) {
   } else {
     e = m - 1;
   }
+
   console.log({
     s: s,
     e: e,
     m: m,
     "list[m]": list[m],
-    "list.slice(s, e+1)": list.slice(s, e + 1), //slice(): e is excluded so i add 1 to it
   });
-  return recBinarySearch(list.slice(s, e + 1), val);
+  return recBinarySearch(list, val, s, e);
 };
-console.log(recBinarySearch([0, 6, 9, 15, 18, 20, 23], 18));
-
+// console.log(recBinarySearch([0, 6, 9, 15, 18, 20, 23], 23, 0, 7));
+console.log("//**** QUICK SORT- RECURSIVE */");
 const quickSort2 = function (list) {
   if (list.length < 2) return list; //empty arrays or with just 1 element have nothing to sort, return as is
-  let pivot = list[0];
+  let pivotIndex = Math.floor(0 + (list.length - 1) / 2);
+  let pivot = list[pivotIndex];
+
+  //put pivot at the end of the list so not to include it later on
+  list[pivotIndex] = list[list.length - 1];
+  list[list.length - 1] = pivot;
   let stackSmaller = [];
   let stackGreater = [];
 
-  for (let i = 1; i < list.length; i++) {
+  for (let i = 0; i < list.length - 1; i++) {
     if (pivot > list[i]) {
       stackSmaller.push(list[i]);
     } else {
@@ -326,8 +320,8 @@ const quickSort2 = function (list) {
   console.log({
     list: list,
     stackSmaller: stackSmaller,
-    stackGreater: stackGreater,
     pivot: pivot,
+    stackGreater: stackGreater,
   });
 
   return [...quickSort2(stackSmaller), pivot, ...quickSort2(stackGreater)]; //return an array of all the values of sTacksmaller + pivot + stackGreater
@@ -337,7 +331,7 @@ console.log(quickSort2([33, 5, 15, 55, 10, 36, 44]));
 const hashTable = {};
 hashTable["jenny"] = 8675309;
 hashTable["emergency"] = 911;
-console.log(hashTable);
+//console.log(hashTable);
 
 //similar to an Object but suitable for large dataset
 const voted = new Map();
@@ -353,9 +347,9 @@ const checkVoter = function (name) {
 
   return;
 };
-checkVoter("Thomas");
-checkVoter("Thomas");
-checkVoter("Ella");
+// checkVoter("Thomas");
+// checkVoter("Thomas");
+// checkVoter("Ella");
 
 //**** GRAPH - BREADTH-FIRST SEARCH (shortest path) */
 
@@ -415,10 +409,387 @@ const friends = {
   thom: [],
   jonny: [],
 };
-console.log(graphQueue(friends));
+//console.log(graphQueue(friends));
 
-//**** GRAPH - DIJKSTRA (fastest path)*/
+//**** GRAPH - DIJKSTRA (fastest path) for weighted graphs*/
 
 console.log("//**** GRAPH - DIJKSTRA (fastest path) */");
-const dijkstra = function (list) {};
-console.log(dijkstra(list));
+const dijkstra = function (myGraph) {
+  //keep track of all the processed nodes
+  const processed = [];
+  let node = findLowestCostNode(costs, processed);
+  let neighbors = {};
+  let cost, newCost;
+
+  // loop through all the nodes
+  while (node != "") {
+    // check if node already processed
+    console.log(node);
+    // grabs the cost of the current
+    cost = costs[node];
+    //grabs all its neighbors
+    neighbors = myGraph[node];
+    //lopp through neighbors
+    for (const key in neighbors) {
+      newCost = cost + neighbors[key];
+
+      if (newCost < costs[key]) {
+        // update new cost of node->neighbor only if cost is smaller than the previous on
+        costs[key] = newCost;
+        // update new parent of neighbor with current node
+        parents[key] = node;
+      }
+    }
+    //add it to the processed list
+    processed.push(node);
+    node = findLowestCostNode(costs, processed);
+    console.log("lowest node:" + node);
+  }
+  return parents;
+};
+/* returns the lowest cost node */
+const findLowestCostNode = function (costs, processed) {
+  // if costs is empty return -1
+  if (Object.keys(costs).length < 1) return "";
+  let lowestNode = ""; //eg : B
+  let lowestCost = Infinity; //eg: 2
+  let cost;
+  //loop trough the different nodes
+  for (const node in costs) {
+    cost = costs[node];
+    //if a smaller value is found, store it
+    if (cost < lowestCost && !processed.includes(node)) {
+      lowestCost = cost;
+      lowestNode = node;
+    }
+  }
+  return lowestNode;
+};
+
+const myGraph = {
+  START: { A: 6, B: 2 },
+  A: { FIN: 1 },
+  B: { A: 3, FIN: 5 },
+  FIN: {},
+};
+const costs = { A: 6, B: 2, FIN: Infinity };
+const parents = { A: "START", B: "START", FIN: Infinity };
+
+//console.log(dijkstra(myGraph));
+
+// console.log(Object.values(myGraph)[0]);
+// console.log(myGraph["START"]["A"]); //gives the weight from START to A = 6
+// console.log(Object.keys(myGraph["START"])); //returns array of keys of sub object: ["A","B"]
+
+// function rev(s) {
+//   let reversed = [];
+//   reversed = [...s];
+//   for (i = 0; i < s.length; i++) {
+//     console.log(reversed.pop());
+//   }
+// }
+// rev("savant");
+
+//**** GREEDY ALGORITHM TO APPROXIMATE COMPLEX/IMPOSSIBLE PROBLEMS*/
+
+console.log(
+  "//****  GREEDY ALGORITHM TO APPROXIMATE COMPLEX/IMPOSSIBLE PROBLEMS */"
+);
+const radioStates = function () {
+  let statesNeeded = new Set([
+    "mt",
+    "wa",
+    "or",
+    "id",
+    "nv",
+    "ut",
+    "ca",
+    "az",
+    "id",
+  ]); //sets store unique values
+  const stations = {};
+  stations["kone"] = new Set(["id", "nv", "ut"]);
+  stations["ktwo"] = new Set(["wa", "id", "mt"]);
+  stations["kthree"] = new Set(["or", "nv", "ca"]);
+  stations["kfour"] = new Set(["nv", "ut"]);
+  stations["kfive"] = new Set(["ca", "az"]);
+  let bestStation;
+  let statesCovered;
+  let covered = new Set();
+  const finalStations = [];
+
+  //console.log(Object.entries(stations));
+  while (statesNeeded.size > 0) {
+    bestStation = "";
+    statesCovered = new Set();
+
+    //loop through all the stations
+    for (const [station, statesForStation] of Object.entries(stations)) {
+      covered = statesNeeded.intersection(statesForStation); //returns only the states of a station that are in the statesNeeded set
+      if (covered.size > statesCovered.size) {
+        bestStation = station;
+        statesCovered = covered;
+      }
+
+      console.log({
+        station: station,
+        statesForStation: statesForStation,
+        bestStation: bestStation,
+        covered: covered,
+        statesCovered: statesCovered,
+        finalStations: finalStations,
+        statesNeeded: statesNeeded,
+      });
+    }
+    finalStations.push(bestStation);
+    statesNeeded = statesNeeded.difference(statesCovered);
+  }
+  return finalStations;
+};
+
+//console.log(radioStates());
+// console.log(statesNeeded);
+// console.log(stations);
+
+console.log("//****  BREADTH-FIRST SEARCH BY MYSELF*/");
+const bfsStates = function () {
+  const states = {
+    ca: ["or", "az", "nv"],
+    or: ["ca", "id", "wa"],
+    wa: ["or"],
+    nv: ["az", "ca", "ut", "id"],
+    az: ["nv", "ca", "nm"],
+    id: ["or", "nv"],
+    nm: [],
+    ut: [],
+  };
+  const qStatesToProcess = ["ca"]; //we start with CA
+  const coloredStates = { ca: "white" }; //store all the nodes colors
+  const processed = []; //keep track of what state has already been processed
+  let color = "white";
+
+  while (qStatesToProcess.length > 0) {
+    // removes first state from queue to respect the FIFO queue
+    let state = qStatesToProcess.shift();
+    if (!processed.includes(state)) {
+      //get the current state's neighbors
+      let neighbors = states[state];
+
+      //reverse the color for the neighbors by getting the parents color
+      color = coloredStates[state];
+      color === "white" ? (color = "black") : (color = "white");
+      //assign the same color to all the neighbors
+      for (let i = 0; i < neighbors.length; i++) {
+        //update the color for that state only if it's not already in the object
+        if (!(neighbors[i] in coloredStates)) {
+          coloredStates[neighbors[i]] = color;
+        }
+      }
+      //add neighbors to the queue
+      qStatesToProcess.push(...neighbors);
+      //flag state as processed
+      processed.push(state);
+    }
+  }
+  console.log({
+    qStatesToProcess: qStatesToProcess,
+    processed: processed,
+  });
+  return coloredStates;
+};
+//console.log(bfsStates());
+
+console.log("//****  KNAPSACK */");
+const knapSack = function () {
+  const objects = {
+    stereo: { price: 3000, weight: 4 },
+    laptop: { price: 2000, weight: 3 },
+    guitar: { price: 1500, weight: 1 },
+  };
+  const knapsackCapacity = 4;
+  const checkedObjects = [];
+
+  for (obj in objects) {
+    checkedObjects.push(obj);
+  }
+  console.log(checkedObjects);
+
+  while (knapSack[weight] < knapsackCapacity || checkedObjects.length > 0) {}
+};
+//knapSack();
+
+console.log("***** TEST CODERPAD - CHANGE PROBLEM ****");
+const changeOLD = function (cash) {
+  const bills = [10, 5, 2];
+  const toChange = { 10: 0, 5: 0, 2: 0 };
+  let i = 0;
+  let bill;
+  let quotient;
+  let remainder = cash;
+  let nextDivisorFound = false;
+  let nextDivisor = -1;
+  const billsToAdd = [];
+
+  for (let i = 0; i < bills.length; i++) {
+    bill = bills[i];
+    //initialize our tracker
+    if (billsToAdd.length < 1) billsToAdd.push(bill);
+    console.log(billsToAdd.length, billsToAdd);
+
+    quotient = Math.floor(remainder / bill);
+    //if the bill hasn't been found to be a candidate for change skip its remainder so we keep looking with the previous one
+    if (billsToAdd.includes(bill)) {
+      remainder = remainder % bill;
+      console.log("remainder=" + remainder);
+    }
+
+    //we now need to make sure that the new remainder can be used in with the other bills we haven't processed yet
+    let j = i + 1; //starts at i+1
+
+    //look for the greatest divisor of the remainder in the remaining bills
+    //this works because our bills are sorted in decreasing order
+    let tempR = remainder;
+    console.log(remainder);
+
+    while (!nextDivisorFound && j < bills.length) {
+      if (tempR % bills[j] === 0) {
+        //we have found a bill that fits the remainder
+        nextDivisorFound = true;
+        nextDivisor = bills[j];
+      }
+      //if the remainder is greater than the quotient of the current bill
+      else {
+        //it will then use that new remainder to find a corresponding match in the subsequent iteration
+        tempR = tempR % bills[j]; //tempR - bills[j];
+      }
+      j++;
+    }
+    console.log("nextdivisor:" + nextDivisor);
+    j = i;
+    tempR = remainder;
+    while (!nextDivisorFound && j < bills.length) {
+      //last hope
+      if (tempR % bills[j] === 0) {
+        nextDivisorFound = true;
+        nextDivisor = bills[j];
+      }
+      j++;
+    }
+
+    if (nextDivisorFound) {
+      billsToAdd.push(bills[i]);
+      billsToAdd.push(nextDivisor);
+    }
+
+    //if there remains bills that can divise the remainder or if we are at the last bill and the that bill can give the change fully
+    //then update the number of bills to use
+    //this means we'll be able to use the next smaller bills to finish the change operation
+    if (
+      (nextDivisorFound && billsToAdd.includes(bills[i])) ||
+      quotient * bill === cash
+    ) {
+      //we can safely add the quotient of the previous bill, otehrwise don't update it just skip it
+      toChange[bill] = quotient;
+    } else {
+      //the remainder is not divisible by any other bills
+      //in thise case we start from scratch again, and remainder is now our original cash value we need change for
+      //remainder = cash;
+    }
+    console.log({
+      i: i,
+      cash: cash,
+      toChange: toChange,
+      bill: bill,
+      quotient: quotient,
+      remainder: remainder,
+      nextDivisorFound,
+      nextDivisor: nextDivisor,
+      billsToAdd: billsToAdd,
+    });
+  }
+  //if on the last bill, the remainder is not 0 then it means the operation isn't possible
+  if (remainder > 0) {
+    return "impossible";
+  }
+
+  return toChange;
+};
+
+const change = function (cash) {
+  const bills = [10, 5, 4, 2];
+  const toChange = { 10: 0, 5: 0, 4: 0, 2: 0 };
+  const graph = {};
+  let bill;
+  let quotient;
+  let remainder = cash;
+  let isPossible = false;
+  let tmpRemainder = cash;
+
+  //1ST CASE - THE EASIEST AND GREEDY ALGORITHM
+  for (let i = 0; i < bills.length; i++) {
+    bill = bills[i];
+    quotient = Math.floor(remainder / bill);
+    remainder = remainder % bill;
+
+    graph[i] = [tmpRemainder, bill, remainder % bills[i], quotient];
+    tmpRemainder = remainder;
+    if (remainder === 0) {
+      isPossible = true;
+    }
+  }
+
+  //2ND CASE - I HAVE TO BACKTRACK AND CHECK IF THE FIRST REMAINDER HAS A DIVISOR AMONG THE BILLS
+  if (!isPossible) {
+    //find the greatest divisor for the first remainder of cash
+    remainder = cash % bills[0];
+    const divisorsOfRemainder = bills.filter((n) => remainder % n === 0);
+    const greatest = Math.max(...divisorsOfRemainder);
+    //console.log({ cash, remainder, divisorsOfRemainder, greatest });
+    if (remainder % greatest === 0) {
+      graph[remainder] = [
+        remainder,
+        greatest,
+        remainder % greatest,
+        remainder / greatest,
+      ];
+    } else {
+      return `it is impossible to give exact change for €${cash}`;
+    }
+  }
+
+  return updateBills(graph, toChange, isPossible);
+};
+const updateBills = function (graph, toChange, isPossible) {
+  if (isPossible) {
+    for (arr of Object.entries(graph)) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        //first case
+        //everything went well and the change will be exact
+        let bill = arr[i][1];
+        toChange[bill] = arr[i][3];
+      }
+    }
+  } else {
+    let arr = Object.entries(graph);
+    //second and last case
+    //last hope, only keep the first bills and the last ones, ignore everything in the middle
+
+    let bill = arr[0][1][1];
+    toChange[bill] = arr[0][1][3];
+    bill = arr[arr.length - 1][1][1];
+    toChange[bill] = arr[arr.length - 1][1][3];
+  }
+  // console.log(graph);
+
+  return toChange;
+};
+console.log(change(6));
+console.log(change(18));
+console.log(change(17));
+console.log(change(42));
+
+console.log(change(14));
+console.log(change(1564));
+console.log(change(33));
+console.log(change(7));
+console.log(change(97894654318)); //doesn't work for this one when remainder is 8
