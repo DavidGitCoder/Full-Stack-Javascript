@@ -40,6 +40,10 @@ export const deleteProduct = async (req, res) => {
   //   console.log("id: ", id);
   //   console.log(req.params);
   try {
+    if (!mongoose.Types.ObjectId(id)) {
+      res.status(404).json({ success: 0, message: `Provide a valid id` });
+    }
+
     await Product.findByIdAndDelete(id);
     res.status(200).json({
       success: true,

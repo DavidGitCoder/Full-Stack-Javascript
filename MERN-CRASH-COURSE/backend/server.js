@@ -13,15 +13,11 @@ const PORT = process.env.PORT;
 app.use(express.json()); //allows us to accept JSON data in the request's body
 app.use("/api/products", productRoutes);
 
-app.get("/", (req, res) => {
-  res.sendFile("../index.html");
-});
-
 // use Postman desktop application to test without an UI
 
 const server = app.listen(PORT, () => {
   const { address, port } = server.address();
-  console.log(`server started at ${address}:${port}, you're all set buddy`);
+  console.log(`server started at localhost:${port}, you're all set buddy`);
   //  connectDB();
   connectDB().then(() => {
     console.log(`DB connected sucessfully`);
