@@ -8,6 +8,7 @@ import {
   VStack,
   Heading,
 } from "@chakra-ui/react";
+import { toaster, Toaster } from "../components/ui/toaster";
 import { useState } from "react";
 
 const CreatePage = () => {
@@ -16,16 +17,40 @@ const CreatePage = () => {
     price: "",
     image: "",
   });
-  const { products, createProduct } = useProductStore();
+  const { createProduct } = useProductStore();
 
-  const handleAddProduct = () => {
+  const handleAddProduct = async () => {
     console.table(newProduct);
-    console.log(createProduct(newProduct));
+    //create the new record
+    const { success, message } = await createProduct(newProduct);
+    //display a toaster message
+    if (!success) {
+      toaster.create({
+        title: "Error",
+        description: message,
+        status: "error",
+        type: "error",
+        duration: 5000,
+      });
+    } else {
+      toaster.create({
+        title: "Success!",
+        description: message,
+        status: "error",
+        type: "success",
+        duration: 5000,
+        closable: true,
+      });
+    }
+    //reset the state
+    setNewProduct({ name: "", price: "", image: "" });
+    console.log(success + " : " + message);
   };
 
   return (
     <Container maxW={"md"}>
       <VStack spacing={8}></VStack>
+      <Toaster />
       <Heading
         as={"h1"}
         size={"4xl"}
