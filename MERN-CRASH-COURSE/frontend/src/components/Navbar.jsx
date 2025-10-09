@@ -39,7 +39,11 @@ const Navbar = () => {
         </Text>
         <HStack spacing={"2"} alignItems={"center"}>
           <Link to={"/create"}>
-            <Button variant={"surface"} colorPalette={"cyan"}>
+            <Button
+              variant={"surface"}
+              colorPalette={"cyan"}
+              transition="background-color 0.3s ease-in-out, transform 0.2s"
+            >
               <BsPlusSquare fontSize={"20"} />
             </Button>
           </Link>
@@ -47,6 +51,7 @@ const Navbar = () => {
             onClick={toggleColorMode}
             variant={"surface"}
             colorPalette={"cyan"}
+            transition="background-color 0.3s ease-in-out, transform 0.2s"
           >
             {colorMode === "light" ? (
               <MdOutlineLightMode fontSize={"20"} />

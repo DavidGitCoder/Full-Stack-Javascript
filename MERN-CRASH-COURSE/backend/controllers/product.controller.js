@@ -25,7 +25,6 @@ export const createProduct = async (req, res) => {
     }
     //create new model
     const newProduct = new Product(product);
-
     //save new product to DB
     await newProduct.save();
     res.status(201).json({ success: true, data: newProduct });
