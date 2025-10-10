@@ -20,7 +20,6 @@ const CreatePage = () => {
   const { createProduct } = useProductStore();
 
   const handleAddProduct = async () => {
-    console.table(newProduct);
     //create the new record
     const { success, message } = await createProduct(newProduct);
     //display a toaster message
@@ -44,7 +43,6 @@ const CreatePage = () => {
     }
     //reset the state
     setNewProduct({ name: "", price: "", image: "" });
-    console.log(success + " : " + message);
   };
 
   return (
