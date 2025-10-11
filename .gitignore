@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local 
 .env
-MERN-CRASH-COURSE
+MERN-CRASH-COURSE/
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
