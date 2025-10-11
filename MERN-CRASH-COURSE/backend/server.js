@@ -15,18 +15,22 @@ const PORT = process.env.PORT;
 const __dirname = path.resolve();
 
 app.use(express.json()); //allows us to accept JSON data in the request's body
+
 app.use("/api/products", productRoutes);
 
 // use Postman desktop application to test without an UI
 
 // if in production then deploy
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "prod") {
+  const frontendDistPath = path.join(__dirname, "frontend", "dist");
+  console.log(frontendDistPath);
+
   //makes our /dist folder (created by Vite: npm run build in /frontend)
   //our static assets
-  app.use(express.static(path.join(__dirname, "/frontend/dist")));
+  app.use(express.static(frontendDistPath));
   //any route that doesn't include /api/products will go here (our frontend in this case)
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+  app.get(/.*/, (req, res) => {
+    res.sendFile(path.join(frontendDistPath, "index.html"));
   });
 }
 

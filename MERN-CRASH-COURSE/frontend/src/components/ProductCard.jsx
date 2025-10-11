@@ -23,6 +23,7 @@ const ProductCard = ({ product }) => {
   const { deleteProduct, updateProduct } = useProductStore();
   const [open, setOpen] = useState(false);
   const textColor = useColorModeValue("gray.600", "gray.200");
+  const textBtnCancelColor = useColorModeValue("gray.800", "gray.800");
   const bg = useColorModeValue("white", "cyan.800");
   const bgPopover = useColorModeValue("gray.200", "cyan.700");
   const colorTitlePopover = useColorModeValue("#764cc9ff", "#5edcf0ff");
@@ -172,7 +173,7 @@ const ProductCard = ({ product }) => {
                         <Box alignSelf={"end"}>
                           <HStack gap={4}>
                             <Button
-                              bg={"blue.300"}
+                              bg={"blue.400"}
                               onClick={() =>
                                 handleUpdateProduct(updatedProduct)
                               }
@@ -180,7 +181,12 @@ const ProductCard = ({ product }) => {
                               Update
                             </Button>
                             <Popover.CloseTrigger asChild>
-                              <Button bg={"gray.100"}>Cancel</Button>
+                              <Button
+                                bg={"gray.100"}
+                                color={textBtnCancelColor}
+                              >
+                                Cancel
+                              </Button>
                             </Popover.CloseTrigger>
                           </HStack>
                         </Box>
